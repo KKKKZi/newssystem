@@ -8,12 +8,16 @@ import joi from 'joi';// 导入  定义表单规则  的模块
 * pattern(正则表达式) 值必须符合正则表达式的规则
 */
 
+// id的验证规则
+const id = joi.string().regex(/^[0-9]{1,}$/);
+
+
 // 用户名的验证规则
 const username = joi.string().alphanum().min(1).max(10).required();
 // 密码的验证规则
 const password = joi.string().pattern(/^[\S]{6,12}$/).required();
 // 学号
-const xuehao = joi.string().regex(/^[0-9]{5,10}$/);
+const xuehao = joi.number().integer().min(1);
 // 昵称
 const nickname = joi.string().min(1).max(15);
 // 真实姓名
@@ -25,6 +29,8 @@ const email = joi.string().email();
 // dataUri() 指的是如下格式的字符串数据：
 // data:image/png;base64,VE9PTUFOWVNFQ1JFVFM=
 const avatar = joi.string().dataUri();
+
+
 
 // 导出登录和注册时候的路由验证规则
 export const reg_login_scheme = {

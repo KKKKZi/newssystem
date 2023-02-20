@@ -7,4 +7,4 @@ export const db = mysql.createPool({
   database: 'xinwenxitong',
   user: 'root',
   password: 'admin123'
-});
+}).promise();

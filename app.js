@@ -6,6 +6,8 @@ import { expressjwt } from "express-jwt";// 导入解析token的中间件
 import config from "./config.js";// 导入配置文件
 import userRouter from "./router/user.js";// 导入用户路由
 import userinfoRouter from './router/userinfo.js';// 导入用户信息路由
+import newstypeRouter from './router/newstype.js';// 导入新闻类型路由
+import adminnewstype from "./router/adminnewstype.js";
 
 const app = express();// 创建express服务器实例
 
@@ -30,9 +32,11 @@ app.use(function (req, res, next) {
 app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ["HS256"], }).unless({ path: [/^\/api\//] }));
 
 // 注册/api路由
-app.use('/api', userRouter.router);
+app.use('/api', userRouter.router, newstypeRouter.router);
 // 注册/my路由，以/my开头的接口都是需要权限的，需要token认证
 app.use('/my', userinfoRouter.router);
+// 注册/admin路由，以/admin开头的接口都是需要权限的，需要token认证
+app.use('/admin', adminnewstype.router);
 
 // 错误中间件(放在所有中间件最后)
 app.use((err, req, res, next) => {
