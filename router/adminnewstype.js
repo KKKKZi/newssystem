@@ -3,7 +3,7 @@ import { addNewsType, updateNewsType, deleteNewsType } from '../router_handler/n
 import expressJoi from '@escook/express-joi';
 import { newstype_scheme, update_newstype_scheme } from '../scheme/newstype.js';
 
-const router = express.Router();
+export const router = express.Router();
 
 // 更新新闻类型
 router.post('/updatenewstype', expressJoi(update_newstype_scheme), updateNewsType);

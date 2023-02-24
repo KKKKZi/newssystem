@@ -2,12 +2,15 @@ import express, { urlencoded } from "express";// 导入express模块
 import cors from "cors";// 导入cors中间件，解决跨域资源共享
 import Joi from "joi";// 导入定义数据验证规则的模块
 import { expressjwt } from "express-jwt";// 导入解析token的中间件
+import multer from 'multer';
 
 import config from "./config.js";// 导入配置文件
-import userRouter from "./router/user.js";// 导入用户路由
-import userinfoRouter from './router/userinfo.js';// 导入用户信息路由
-import newstypeRouter from './router/newstype.js';// 导入新闻类型路由
+import user from "./router/user.js";// 导入用户路由
+import userinfo from './router/userinfo.js';// 导入用户信息路由
+import newstype from './router/newstype.js';// 导入新闻类型路由
 import adminnewstype from "./router/adminnewstype.js";
+import news from './router/news.js';// 导入获取新闻路由
+import adminnews from "./router/adminnews.js";
 
 const app = express();// 创建express服务器实例
 
@@ -32,19 +35,20 @@ app.use(function (req, res, next) {
 app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ["HS256"], }).unless({ path: [/^\/api\//] }));
 
 // 注册/api路由
-app.use('/api', userRouter.router, newstypeRouter.router);
+app.use('/api', user.router, newstype.router, news.router);
 // 注册/my路由，以/my开头的接口都是需要权限的，需要token认证
-app.use('/my', userinfoRouter.router);
+app.use('/user', userinfo.router);
 // 注册/admin路由，以/admin开头的接口都是需要权限的，需要token认证
-app.use('/admin', adminnewstype.router);
+app.use('/admin', adminnewstype.router, adminnews.router);
 
 // 错误中间件(放在所有中间件最后)
 app.use((err, req, res, next) => {
   // 数据验证失败
   if (err instanceof Joi.ValidationError) return res.cc(err);
   // 身份令牌token认证失败
-  console.log(err);
   if (err.name === 'UnauthorizedError') return res.cc('身份认证失败！');
+  // multer错误
+  if (err instanceof multer.MulterError) return res.cc(err);
   // 其他错误
   res.cc(err);
 });

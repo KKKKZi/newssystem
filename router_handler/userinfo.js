@@ -5,6 +5,7 @@ import bcryptjs from 'bcryptjs';// 导入明文加密模块
 const getUserInfo = async (req, res) => {
   // 注意：req 对象上的 auth 属性，是 Token 解析成功，express-jwt 中间件挂载上去的
   const user = req.auth;
+  console.log(user);
   try {
     // 根据用户的 id，查询用户的基本信息
     // ！！为了防止用户的密码泄露，需要排除 password 字段,通过as将password列替换为null
@@ -27,7 +28,8 @@ const updateUserInfo = async (req, res) => {
   try {
     const sql = 'update users set xuehao=?,nickname=?,realname=?,phonenumber=?,email=?,avatar=? where id=?';
     const [results] = await db.query(sql,
-      [user.xuehao, user.nickname, user.realname, user.phonenumber, user.email, user.avatar, req.auth.id]);
+      [user.xuehao, user.nickname, user.realname, user.phonenumber, user.email, req.files.avatar, req.auth.id]);
+    // console.log(results);
     // 执行操作成功，但是影响的行数不为1
     if (results.affectedRows !== 1) return res.cc("更新信息失败！");
     res.cc('更新信息成功！', 0);

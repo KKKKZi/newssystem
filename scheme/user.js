@@ -26,9 +26,8 @@ const realname = joi.string().min(1).max(15);
 const phonenumber = joi.string().max(11);
 // email
 const email = joi.string().email();
-// dataUri() 指的是如下格式的字符串数据：
-// data:image/png;base64,VE9PTUFOWVNFQ1JFVFM=
-const avatar = joi.string().dataUri();
+
+const avatar = joi.string().regex(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/);
 
 
 
@@ -47,7 +46,6 @@ export const update_userinfo_scheme = {
     realname,
     phonenumber,
     email,
-    avatar
   }
 };
 // 导出重置密码验证规则

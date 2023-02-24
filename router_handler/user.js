@@ -46,8 +46,8 @@ const login = async (req, res) => {
     const compareResult = bcryptjs.compareSync(userinfo.password, results[0].password);
     if (!compareResult) return res.cc('密码错误！');
     // 生成JWT认证的token字符串，token需要剔除密码和头像的值
-    console.log(results);
-    const user = { ...results, password: '', avatar: '' };
+    const user = { ...results[0], password: '', avatar: '' };
+    // console.log(user);
     // 使用Jwt.sign(源对象,jwt密钥,配置对象)
     const tokenStr = Jwt.sign(user, config.jwtSecretKey, {
       expiresIn: '10h'// 设置token令牌有效期是10小时
