@@ -1,21 +1,30 @@
 import express from 'express';
-import expressJoi from "@escook/express-joi";// 导入验证表单数据的中间件
+import expressJoi from '@escook/express-joi';// 导入验证数据合法性的中间件
+import { upload } from '../utils/multer.js';
+/* 路由处理函数 */
+import userinfoHandler from '../router_handler/userinfo.js';
+import { addCmt, deleteCmt, updCmt } from '../router_handler/comment.js';
+/* 验证规则 */
+import { update_userinfo_scheme, update_password_scheme } from '../scheme/user.js';// 导入验证规则
+import { addcmt_scheme, delcmt_scheme, updcmt_scheme } from '../scheme/comment.js';
 
-// 导入路由处理函数
-import userHandler from '../router_handler/user.js';
+const router = express.Router();// 创建express的路由实例
 
-// 导入表单验证规则
-import { reg_login_scheme } from '../scheme/user.js';// 导入注册登录的验证规则
+/* 用户信息模块 */
+// 获取用户信息
+router.get('/userinfo', userinfoHandler.getUserInfo);
+// 更新用户信息
+router.post('/userinfo', upload.fields([{ name: 'avatar' }]), expressJoi(update_userinfo_scheme), userinfoHandler.updateUserInfo);
+// 重置密码
+router.post('/updpwd', expressJoi(update_password_scheme), userinfoHandler.updatePassword);
 
-
-
-const router = express.Router();// 创建路由对象
-
-// 注册新用户
-router.post('/reguser', expressJoi(reg_login_scheme), userHandler.reguser);
-
-// 用户登录
-router.post('/login', expressJoi(reg_login_scheme), userHandler.login);
+/* 评论模块 */
+// 添加评论
+router.post('/cmt', expressJoi(addcmt_scheme), addCmt);
+// 删除评论
+router.post('/delcmt', expressJoi(delcmt_scheme), deleteCmt);
+// 修改评论
+router.post('/updcmt', expressJoi(updcmt_scheme), updCmt);
 
 export default {
   router

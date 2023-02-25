@@ -5,12 +5,11 @@ import { expressjwt } from "express-jwt";// 导入解析token的中间件
 import multer from 'multer';
 
 import config from "./config.js";// 导入配置文件
+import { adminPerm } from './utils/adminperm.js';// 管理员路由权限控制
+
 import user from "./router/user.js";// 导入用户路由
-import userinfo from './router/userinfo.js';// 导入用户信息路由
-import newstype from './router/newstype.js';// 导入新闻类型路由
-import adminnewstype from "./router/adminnewstype.js";
-import news from './router/news.js';// 导入获取新闻路由
-import adminnews from "./router/adminnews.js";
+import api from './router/api.js';// 导入api路由
+import admin from './router/admin.js';// 导入admin路由
 
 const app = express();// 创建express服务器实例
 
@@ -35,11 +34,11 @@ app.use(function (req, res, next) {
 app.use(expressjwt({ secret: config.jwtSecretKey, algorithms: ["HS256"], }).unless({ path: [/^\/api\//] }));
 
 // 注册/api路由
-app.use('/api', user.router, newstype.router, news.router);
+app.use('/api', api.router);
 // 注册/my路由，以/my开头的接口都是需要权限的，需要token认证
-app.use('/user', userinfo.router);
+app.use('/user', user.router);
 // 注册/admin路由，以/admin开头的接口都是需要权限的，需要token认证
-app.use('/admin', adminnewstype.router, adminnews.router);
+app.use('/admin', adminPerm, admin.router);
 
 // 错误中间件(放在所有中间件最后)
 app.use((err, req, res, next) => {

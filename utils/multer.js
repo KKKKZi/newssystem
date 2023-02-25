@@ -1,4 +1,3 @@
-import { log } from 'console';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -21,13 +20,13 @@ const storage = multer.diskStorage({
 
 // 接受指定 fields 的混合文件。这些文件的信息保存在 req.files。
 // fields 是一个对象数组，具有 name 和可选的 maxCount 属性。
-const fieldList = [
-  { name: 'swiper' },
-  { name: 'avatar' },
-  { name: 'video' },
-  { name: 'file' },
-  { name: 'image' }
-];
+// const fieldList = [
+//   { name: 'swiper', maxCount: 1},
+//   { name: 'avatar' },
+//   { name: 'video' },
+//   { name: 'file' },
+//   { name: 'image' }
+// ];
 
 // 文件过滤器
 function fileFilter(req, file, cb) {
@@ -35,17 +34,16 @@ function fileFilter(req, file, cb) {
   // 拒绝这个文件，使用`false`
   // cb(null, false);
   const extname = path.extname(file.originalname);
-  // console.log('file.fieldname:', file.fieldname, 'extname:', extname);
-  if (file.fieldname === 'avatar' && extname === ('.jpg' || '.png' || '.jpeg' || '.JPG' || '.JPEG' || '.PNG'))
+  // console.log('file:', file, 'file.fieldname:', file.fieldname, 'extname:', extname);
+  if (file.fieldname === 'avatar' && (extname === '.jpg' || extname === '.png' || extname === '.jpeg' || extname === '.JPG' || extname === '.JPEG' || extname === '.PNG'))
   // 接受这个文件，使用`true`，像这样:
   { return cb(null, true); }
-  else if (file.fieldname === 'swiper' && extname === ('.jpg' || '.png' || '.jpeg' || '.JPG' || '.JPEG' || '.PNG')) { return cb(null, true); }
-  else if (file.fieldname === 'image' && extname === ('.jpg' || '.png' || '.jpeg' || '.JPG' || '.JPEG' || '.PNG')) { return cb(null, true); }
-  else if (file.fieldname === 'video' && extname === ('.mp4' || '.avi' || '.mov')) { return cb(null, true); }
-  else if (file.fieldname === 'file' && extname === ('.docx' || '.zip' || '.xlsx' || '.pptx' || '.rar' || '.pdf')) { return cb(null, true); }
-  else
+  else if (file.fieldname === 'swiper' && (extname === '.jpg' || extname === '.png' || extname === '.jpeg' || extname === '.JPG' || extname === '.JPEG' || extname === '.PNG')) { return cb(null, true); }
+  else if (file.fieldname === 'image' && (extname === '.jpg' || extname === '.png' || extname === '.jpeg' || extname === '.JPG' || extname === '.JPEG' || extname === '.PNG')) { return cb(null, true); }
+  else if (file.fieldname === 'video' && (extname === '.mp4' || extname === '.avi' || extname === '.mov')) { return cb(null, true); }
+  else if (file.fieldname === 'file' && (extname === '.docx' || extname === '.zip' || extname === '.xlsx' || extname === '.pptx' || extname === '.rar' || extname === '.pdf')) { return cb(null, true); }
   // 如果有问题，你可以总是这样发送一个错误:
-  { return cb(new Error('multer\'s fileFilter error')); }
+  return cb(new Error('multer\'s fileFilter error'));
 
 }
-export const upload = multer({ storage, fileFilter }).fields(fieldList);
+export const upload = multer({ storage, fileFilter });

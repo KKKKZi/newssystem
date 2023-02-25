@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const id = Joi.number().integer().min(1).required();
 
-const title = Joi.string().regex(/^[\S]+$/).max(255).required();
+const title = Joi.string().min(1).max(255).required();
 
 // 新闻类型的验证规则
 const typename = Joi.string().min(1).max(10).required();

@@ -21,15 +21,14 @@ const getUserInfo = async (req, res) => {
     return res.cc(err);
   }
 };
-
 /* 更新用户基本信息 */
 const updateUserInfo = async (req, res) => {
   const user = req.body;// 接收表单数据
   try {
     const sql = 'update users set xuehao=?,nickname=?,realname=?,phonenumber=?,email=?,avatar=? where id=?';
     const [results] = await db.query(sql,
-      [user.xuehao, user.nickname, user.realname, user.phonenumber, user.email, req.files.avatar, req.auth.id]);
-    // console.log(results);
+      [user.xuehao, user.nickname, user.realname, user.phonenumber, user.email, req.files ? req.files.avatar[0].path : null, req.auth.id]);
+    // console.log(req.files.avatar[0].path);
     // 执行操作成功，但是影响的行数不为1
     if (results.affectedRows !== 1) return res.cc("更新信息失败！");
     res.cc('更新信息成功！', 0);
@@ -37,9 +36,8 @@ const updateUserInfo = async (req, res) => {
     return res.cc(err);
   }
 };
-
-/* 重置密码 */
-// 普通用户重置密码需要验证原密码
+/* 更新密码 */
+// 普通用户更新密码需要验证原密码
 const updatePassword = async (req, res) => {
   // 如果是普通用户则id来源于token，如果是管理员则id来源于表单提交数据
   try {
@@ -57,8 +55,25 @@ const updatePassword = async (req, res) => {
     return res.cc(error);
   }
 };
+/* 重置密码 */
+// 管理员根据用户id重置密码为123456
+export const resetPassword = async (req, res) => {
+  // 如果是普通用户则id来源于token，如果是管理员则id来源于表单提交数据
+  try {
+    const [results1] = await db.query('select * from users where id = ?', req.body.id);
+    if (results1.length !== 1) return res.cc('用户不存在!');
+    // // 更新密码
+    const newPwd = bcryptjs.hashSync('123456', 10);// 明文加密
+    const sql = 'UPDATE users SET password=? where id = ?';
+    const [results2] = await db.query(sql, [newPwd, req.body.id]);
+    if (results2.affectedRows !== 1) return res.cc('重置密码失败！');
+    res.cc('重置密码成功！', 0);
+  } catch (error) {
+    return res.cc(error);
+  }
+};
 export default {
   getUserInfo,
   updateUserInfo,
-  updatePassword
+  updatePassword,
 };
