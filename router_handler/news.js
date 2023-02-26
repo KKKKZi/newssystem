@@ -34,13 +34,18 @@ export async function addNews(req, res) {
 // 删除新闻
 export async function deleteNews(req, res) {
   try {
+    // 判断新闻是否存在
     const [results1] = await db.query('select * from news where id=?', req.body.id);
     if (results1.length === 0) return res.cc('新闻不存在!');
+    // 执行数据库操作
     const [results] = await db.query('delete from news where id=?', req.body.id);
     if (results.affectedRows === 0) return res.cc('删除新闻信息失败!');
+    // 删除新闻所含评论
+    const [results2] = await db.query('delete from comment where newsid=?', req.body.id);
+    // if (results2.affectedRows === 0) return res.cc('删除该新闻评论失败或该新闻评论为空！');
     res.send({
       status: 0,
-      message: '删除新闻信息成功！'
+      message: '删除新闻信息成功!该新闻所含评论已清空!'
     });
   } catch (error) {
     return res.cc(error);
