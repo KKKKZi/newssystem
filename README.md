@@ -5,6 +5,3 @@
 * Node.js
 * Express
 * MySQL8.0
-
-#### 注：
-本人自用毕业设计
